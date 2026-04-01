@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DateTrack — Your Personal Milestone Timeline</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Variables ──────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:      #FDF6EF;
+      --cream-dark: #F5EBE0;
+      --blush:      #F2C4C4;
+      --blush-light:#FAE8E8;
+      --rose:       #C9848A;
+      --rose-dark:  #A8636A;
+      --sage:       #9CAF88;
+      --sage-light: #D4E6C3;
+      --sage-dark:  #7A9468;
+      --amber:      #E8C47A;
+      --amber-light:#FDF0C8;
+      --amber-dark: #C49A3C;
+      --brown:      #5C3D2E;
+      --brown-light:#8B6355;
+      --brown-mid:  #7A4F3A;
+      --white:      #FFFFFF;
+      --shadow:     rgba(92,61,46,0.10);
+      --shadow-lg:  rgba(92,61,46,0.18);
+
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body:    'Lato', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--cream);
+      color: var(--brown);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    /* ─── Hero ───────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(160deg, #FDE8E8 0%, #FDF1E8 35%, #EFF4E8 100%);
+      padding: 80px 24px 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(242,196,196,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 30%, rgba(156,175,136,0.25) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .hero-cookie {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      display: block;
+      animation: floatcookie 4s ease-in-out infinite;
+    }
+
+    @keyframes floatcookie {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 700;
+      color: var(--brown);
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+      line-height: 1.15;
+    }
+
+    .hero h1 .heart { color: var(--rose); }
+
+    .hero-subtitle {
+      font-family: var(--font-heading);
+      font-style: italic;
+      font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+      color: var(--brown-light);
+      max-width: 520px;
+      margin: 0 auto 40px;
+    }
+
+    /* ─── Live Counter ───────────────────────────────────── */
+    .counter-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin: 0 auto;
+      max-width: 700px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .counter-card {
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: 20px;
+      padding: 22px 28px;
+      box-shadow: 0 4px 24px var(--shadow);
+      min-width: 140px;
+      text-align: center;
+    }
+
+    .counter-card .number {
+      font-family: var(--font-heading);
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--rose-dark);
+      line-height: 1;
+      display: block;
+    }
+
+    .counter-card .label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--brown-light);
+      margin-top: 6px;
+      display: block;
+    }
+
+    /* ─── Section Shared ─────────────────────────────────── */
+    section {
+      padding: 72px 24px;
+    }
+
+    .section-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--sage-dark);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.7rem, 4vw, 2.4rem);
+      color: var(--brown);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .section-desc {
+      color: var(--brown-light);
+      font-size: 1rem;
+      max-width: 560px;
+      margin-bottom: 48px;
+    }
+
+    /* ─── Timeline ───────────────────────────────────────── */
+    .timeline-section {
+      background: var(--cream-dark);
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 0;
+    }
+
+    /* Vertical line */
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 28px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--sage-light), var(--blush), var(--amber-light));
+      border-radius: 2px;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .timeline-item:last-child { margin-bottom: 0; }
+
+    .tl-dot-wrap {
+      flex-shrink: 0;
+      width: 58px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 4px;
+    }
+
+    .tl-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 3px solid var(--white);
+      box-shadow: 0 0 0 3px var(--sage), 0 2px 8px var(--shadow);
+      background: var(--sage);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tl-dot.past  { background: var(--sage);  box-shadow: 0 0 0 3px var(--sage); }
+    .tl-dot.now   { background: var(--rose);  box-shadow: 0 0 0 3px var(--rose);
+                    animation: pulse-dot 2.2s ease-in-out infinite; }
+    .tl-dot.soon  { background: var(--blush); box-shadow: 0 0 0 3px var(--blush); }
+    .tl-dot.future{ background: var(--cream-dark); box-shadow: 0 0 0 3px var(--amber); border-color: var(--amber); }
+    .tl-dot.boundary { background: var(--amber-light); box-shadow: 0 0 0 3px var(--amber); }
+
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 3px var(--rose), 0 0 0 7px rgba(201,132,138,0.25); }
+      50%       { box-shadow: 0 0 0 3px var(--rose), 0 0 0 12px rgba(201,132,138,0.10); }
+    }
+
+    .tl-body {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 16px var(--shadow);
+      flex: 1;
+      border-left: 4px solid var(--sage-light);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .tl-body:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px var(--shadow-lg);
+    }
+
+    .tl-body.phase-meds    { border-color: var(--sage); }
+    .tl-body.phase-period  { border-color: var(--blush); }
+    .tl-body.phase-window  { border-color: var(--rose); background: linear-gradient(135deg, #FFF8F8, #FFFFFF); }
+    .tl-body.phase-pregnancy { border-color: var(--amber); background: linear-gradient(135deg, #FFFDF4, #FFFFFF); }
+    .tl-body.phase-boundary { border-color: var(--amber-dark); background: var(--amber-light); }
+
+    .tl-date {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--brown-light);
+      margin-bottom: 4px;
+    }
+
+    .tl-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--brown);
+      margin-bottom: 6px;
+    }
+
+    .tl-desc {
+      font-size: 0.92rem;
+      color: var(--brown-light);
+      line-height: 1.55;
+    }
+
+    .tl-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+
+    .badge-done    { background: var(--sage-light);  color: var(--sage-dark); }
+    .badge-est     { background: var(--blush-light); color: var(--rose-dark); }
+    .badge-open    { background: #FCE8E8;            color: var(--rose-dark); }
+    .badge-future  { background: var(--amber-light); color: var(--amber-dark); }
+    .badge-soft    { background: var(--cream-dark);  color: var(--brown-light); }
+
+    /* ─── Scenarios ──────────────────────────────────────── */
+    .scenarios-section {
+      background: var(--cream);
+    }
+
+    .scenarios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .scenario-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: 0 4px 20px var(--shadow);
+      border-top: 5px solid var(--sage);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .scenario-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 32px var(--shadow-lg);
+    }
+
+    .scenario-card.best   { border-top-color: var(--sage); }
+    .scenario-card.avg    { border-top-color: var(--amber); }
+    .scenario-card.later  { border-top-color: var(--rose); }
+
+    .scenario-emoji {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .scenario-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--brown);
+      margin-bottom: 18px;
+    }
+
+    .scenario-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--cream-dark);
+      font-size: 0.88rem;
+    }
+
+    .scenario-row:last-of-type { border-bottom: none; }
+
+    .scenario-row .key {
+      color: var(--brown-light);
+      font-size: 0.8rem;
+    }
+
+    .scenario-row .val {
+      font-weight: 700;
+      color: var(--brown);
+      text-align: right;
+    }
+
+    .scenario-status {
+      margin-top: 18px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .status-great  { background: var(--sage-light);  color: var(--sage-dark); }
+    .status-good   { background: var(--amber-light); color: #8A6800; }
+    .status-fine   { background: #FDE8E8;            color: var(--rose-dark); }
+
+    .scenario-months {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      gap: 8px;
+    }
+
+    .months-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    .months-circle .num  { font-size: 1.5rem; font-family: var(--font-heading); }
+    .months-circle .unit { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; }
+
+    .mc-green  { background: var(--sage-light);  color: var(--sage-dark); }
+    .mc-amber  { background: var(--amber-light); color: #8A6800; }
+    .mc-pink   { background: #FCE4E4;            color: var(--rose-dark); }
+
+    /* ─── Safe Window ────────────────────────────────────── */
+    .window-section {
+      background: linear-gradient(180deg, var(--cream-dark) 0%, var(--cream) 100%);
+    }
+
+    .progress-container {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 36px 36px 30px;
+      box-shadow: 0 4px 24px var(--shadow);
+      margin-bottom: 32px;
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--brown-light);
+      margin-bottom: 10px;
+    }
+
+    .progress-track {
+      position: relative;
+      height: 28px;
+      border-radius: 14px;
+      background: var(--cream-dark);
+      overflow: visible;
+      margin-bottom: 8px;
+    }
+
+    .progress-zones {
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .zone-green  { background: linear-gradient(90deg, #B5D6A4, #A8CF9A); flex: 15; }
+    .zone-amber  { background: linear-gradient(90deg, #EFD58A, #E8C87A); flex: 2; }
+    .zone-rose   { background: linear-gradient(90deg, #F2B5B5, #EAA0A0); flex: 1; }
+
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      border-radius: 14px;
+      background: transparent;
+    }
+
+    .progress-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      transition: left 1s cubic-bezier(.22,.68,0,1.2);
+    }
+
+    .marker-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--rose-dark);
+      border: 4px solid var(--white);
+      box-shadow: 0 2px 12px rgba(168,99,106,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      animation: pulse-marker 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-marker {
+      0%,100% { box-shadow: 0 2px 12px rgba(168,99,106,0.5), 0 0 0 0 rgba(168,99,106,0.3); }
+      50%      { box-shadow: 0 2px 12px rgba(168,99,106,0.5), 0 0 0 10px rgba(168,99,106,0.0); }
+    }
+
+    .marker-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--brown);
+      color: var(--white);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 8px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .marker-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--brown);
+    }
+
+    .zone-tick {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 2px;
+      height: 36px;
+      background: rgba(255,255,255,0.5);
+      pointer-events: none;
+    }
+
+    .progress-sublabels {
+      display: flex;
+      font-size: 0.7rem;
+      color: var(--brown-light);
+      margin-top: 6px;
+      position: relative;
+    }
+
+    .sublabel {
+      position: absolute;
+      transform: translateX(-50%);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .window-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .win-stat {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 12px var(--shadow);
+      text-align: center;
+    }
+
+    .win-stat .ws-num {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--rose-dark);
+      display: block;
+      line-height: 1;
+    }
+
+    .win-stat .ws-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--brown-light);
+      font-weight: 700;
+      margin-top: 6px;
+      display: block;
+    }
+
+    .win-stat.green  .ws-num { color: var(--sage-dark); }
+    .win-stat.amber  .ws-num { color: var(--amber-dark); }
+
+    /* ─── Study Note ─────────────────────────────────────── */
+    .study-note {
+      background: var(--sage-light);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-top: 40px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .study-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .study-note h4 {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      color: var(--brown);
+      margin-bottom: 4px;
+    }
+
+    .study-note p {
+      font-size: 0.88rem;
+      color: var(--brown-light);
+      line-height: 1.55;
+    }
+
+    /* ─── Footer ─────────────────────────────────────────── */
+    .footer {
+      background: var(--brown);
+      color: rgba(255,255,255,0.85);
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .footer-heart {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 14px;
+      animation: floatcookie 4s ease-in-out infinite;
+    }
+
+    .footer-title {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .footer-sub {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.6);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* ─── Divider ─────────────────────────────────────────── */
+    .wave-divider {
+      height: 40px;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+    }
+
+    /* ─── Responsive ─────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .counter-card .number { font-size: 2.2rem; }
+      .counter-card { padding: 18px 20px; min-width: 120px; }
+      .tl-body { padding: 16px 18px; }
+      .progress-container { padding: 24px 18px 20px; }
+      .progress-labels { font-size: 0.65rem; }
+      .timeline::before { left: 22px; }
+      .tl-dot-wrap { width: 46px; }
+    }
+
+    /* ─── Subtle entrance animations ────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero">
+  <span class="hero-cookie">⭐</span>
+  <h1>DateTrack <span class="heart">♥</span></h1>
+  <p class="hero-subtitle">Your personal milestone timeline</p>
+
+  <div class="counter-cluster">
+    <div class="counter-card">
+      <span class="number" id="days-off">—</span>
+      <span class="label">Days since start</span>
+    </div>
+    <div class="counter-card">
+      <span class="number" id="weeks-off">—</span>
+      <span class="label">Weeks since start</span>
+    </div>
+    <div class="counter-card">
+      <span class="number" id="months-remaining">—</span>
+      <span class="label">Months of runway left</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ TIMELINE ══════════════════ -->
+<section class="timeline-section">
+  <div class="section-inner">
+    <span class="section-label">The Journey</span>
+    <h2 class="section-title">Your Path Forward</h2>
+    <p class="section-desc">Each phase is a milestone. Every step forward matters — you're already further than you were yesterday.</p>
+
+    <div class="timeline">
+
+      <!-- Phase 1: Start -->
+      <div class="timeline-item fade-in">
+        <div class="tl-dot-wrap">
+          <div class="tl-dot past"></div>
+        </div>
+        <div class="tl-body phase-meds">
+          <div class="tl-date">February 10, 2026</div>
+          <div class="tl-title">🌿 Phase 1 — Start Date</div>
+          <div class="tl-desc">
+            The journey begins. Day one of tracking your personal milestone timeline.
+          </div>
+          <span class="tl-badge badge-done">✓ Complete</span>
+        </div>
+      </div>
+
+      <!-- Phase 2: Initial Milestone -->
+      <div class="timeline-item fade-in">
+        <div class="tl-dot-wrap">
+          <div class="tl-dot past"></div>
+        </div>
+        <div class="tl-body phase-meds">
+          <div class="tl-date">February 5, 2026</div>
+          <div class="tl-title">🔖 Phase 2 — Initial Milestone</div>
+          <div class="tl-desc">
+            An important early milestone. The groundwork is laid for what comes next.
+          </div>
+          <span class="tl-badge badge-done">✓ Complete</span>
+        </div>
+      </div>
+
+      <!-- Phase 3: Key Milestone -->
+      <div class="timeline-item fade-in">
+        <div class="tl-dot-wrap">
+          <div class="tl-dot soon" id="period-dot"></div>
+        </div>
+        <div class="tl-body phase-period">
+          <div class="tl-date">~April 7, 2026 <em>(estimated)</em></div>
+          <div class="tl-title">🌱 Phase 3 — Key Milestone</div>
+          <div class="tl-desc">
+            ~8 weeks after the start date, this milestone is expected.
+            Every timeline is unique; this is an estimate, not a deadline.
+          </div>
+          <span class="tl-badge badge-est" id="period-badge">Estimated milestone</span>
+        </div>
+      </div>
+
+      <!-- Phase 4: Goal Window -->
+      <div class="timeline-item fade-in">
+        <div class="tl-dot-wrap">
+          <div class="tl-dot soon" id="window-dot"></div>
+        </div>
+        <div class="tl-body phase-window">
+          <div class="tl-date">~May 6, 2026 <em>(estimated)</em></div>
+          <div class="tl-title">🌸 Phase 4 — Goal Window Opens</div>
+          <div class="tl-desc">
+            ~4 weeks after Phase 3, the goal window is expected to open.
+            This is the moment you've been working toward.
+          </div>
+          <span class="tl-badge badge-open">⭐ Goal window is open</span>
+        </div>
+      </div>
+
+      <!-- Phase 5: Goal Reached -->
+      <div class="timeline-item fade-in">
+        <div class="tl-dot-wrap">
+          <div class="tl-dot future"></div>
+        </div>
+        <div class="tl-body phase-pregnancy">
+          <div class="tl-date">If Phase 4 milestone: ~May 6, 2026</div>
+          <div class="tl-title">🌟 Phase 5 — Goal Reached</div>
+          <div class="tl-desc">
+            <strong>Estimated target date: February 10, 2027</strong> — 12 months since start.
+            Well within the goal window, with plenty of buffer remaining.
+          </div>
+          <span class="tl-badge badge-future">✨ Future milestone</span>
+        </div>
+      </div>
+
+      <!-- Phase 6: Goal Window boundary -->
+      <div class="timeline-item fade-in">
+        <div class="tl-dot-wrap">
+          <div class="tl-dot boundary"></div>
+        </div>
+        <div class="tl-body phase-boundary">
+          <div class="tl-date">August 10, 2027 — 18 months since start</div>
+          <div class="tl-title">📍 Goal Window — Soft Horizon</div>
+          <div class="tl-desc">
+            This is a gentle boundary on the horizon, not a wall. 18 months provides a generous,
+            comfortable buffer. Even a later start gives plenty of room before this horizon.
+            <br/><br/>
+            <em>You have more time than it feels.</em>
+          </div>
+          <span class="tl-badge badge-soft">Soft boundary</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SCENARIOS ══════════════════ -->
+<section class="scenarios-section">
+  <div class="section-inner">
+    <span class="section-label">Planning Ahead</span>
+    <h2 class="section-title">Three Scenarios</h2>
+    <p class="section-desc">Every path leads somewhere meaningful. Here's what each timeline looks like — all three are well within the goal window.</p>
+
+    <div class="scenarios-grid">
+
+      <!-- Best Case -->
+      <div class="scenario-card best fade-in">
+        <span class="scenario-emoji">🌸</span>
+        <div class="scenario-title">Early</div>
+
+        <div class="scenario-row">
+          <span class="key">Phase 3 milestone</span>
+          <span class="val">April 7, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Phase 4 milestone</span>
+          <span class="val">~May 6, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Phase 5 target</span>
+          <span class="val">Feb 10, 2027</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Months since start</span>
+          <span class="val">12 months</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Buffer remaining</span>
+          <span class="val">6 months</span>
+        </div>
+
+        <div class="scenario-months">
+          <div class="months-circle mc-green">
+            <span class="num">12</span>
+            <span class="unit">months</span>
+          </div>
+        </div>
+
+        <div class="scenario-status status-great">✅ Well within the goal window</div>
+      </div>
+
+      <!-- Average Case -->
+      <div class="scenario-card avg fade-in">
+        <span class="scenario-emoji">🌼</span>
+        <div class="scenario-title">On Track</div>
+
+        <div class="scenario-row">
+          <span class="key">Phase 3 milestone</span>
+          <span class="val">May 1, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Phase 4 milestone</span>
+          <span class="val">~June 1, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Phase 5 target</span>
+          <span class="val">March 8, 2027</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Months since start</span>
+          <span class="val">13 months</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Buffer remaining</span>
+          <span class="val">5 months</span>
+        </div>
+
+        <div class="scenario-months">
+          <div class="months-circle mc-amber">
+            <span class="num">13</span>
+            <span class="unit">months</span>
+          </div>
+        </div>
+
+        <div class="scenario-status status-great">✅ Within the goal window</div>
+      </div>
+
+      <!-- Later Case -->
+      <div class="scenario-card later fade-in">
+        <span class="scenario-emoji">🌷</span>
+        <div class="scenario-title">Later</div>
+
+        <div class="scenario-row">
+          <span class="key">Phase 3 milestone</span>
+          <span class="val">June 1, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Phase 4 milestone</span>
+          <span class="val">~July 1, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Phase 5 target</span>
+          <span class="val">April 7, 2027</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Months since start</span>
+          <span class="val">14 months</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Buffer remaining</span>
+          <span class="val">4 months</span>
+        </div>
+
+        <div class="scenario-months">
+          <div class="months-circle mc-pink">
+            <span class="num">14</span>
+            <span class="unit">months</span>
+          </div>
+        </div>
+
+        <div class="scenario-status status-good">✅ Comfortably within the goal window</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ GOAL WINDOW ══════════════════ -->
+<section class="window-section">
+  <div class="section-inner">
+    <span class="section-label">Progress Tracker</span>
+    <h2 class="section-title">The Goal Window</h2>
+    <p class="section-desc">You have more runway than it feels. Here's exactly where you are right now — and how much time remains.</p>
+
+    <div class="progress-container fade-in">
+      <div class="progress-labels">
+        <span>Feb 10, 2026</span>
+        <span>15 months</span>
+        <span>17 months</span>
+        <span>Aug 10, 2027</span>
+      </div>
+
+      <div class="progress-track" id="progress-track">
+        <div class="progress-zones">
+          <div class="zone-green"></div>
+          <div class="zone-amber"></div>
+          <div class="zone-rose"></div>
+        </div>
+
+        <!-- Zone ticks -->
+        <div class="zone-tick" style="left: 83.33%;"></div>
+        <div class="zone-tick" style="left: 94.44%;"></div>
+
+        <!-- Marker -->
+        <div class="progress-marker" id="progress-marker" style="left: 0%;">
+          <div class="marker-tooltip" id="marker-tooltip">You are here</div>
+          <div class="marker-dot">📍</div>
+        </div>
+      </div>
+
+      <div style="position:relative; height: 22px; margin-top: 6px;">
+        <div class="sublabel" style="left: 0%; font-size:0.7rem; color: var(--sage-dark); font-weight:700;">Start</div>
+        <div class="sublabel" style="left: 41.67%; font-size:0.7rem; color: var(--brown-light);">~May 6<br><em style="font-size:0.65rem">goal opens</em></div>
+        <div class="sublabel" style="left: 83.33%; font-size:0.7rem; color: #8A6800; font-weight:700;">15 mo<br><em style="font-size:0.65rem">soft caution</em></div>
+        <div class="sublabel" style="left: 100%; transform:translateX(-100%); font-size:0.7rem; color: #A05050; font-weight:700;">18 mo<br><em style="font-size:0.65rem">goal window end</em></div>
+      </div>
+    </div>
+
+    <div class="window-stats">
+      <div class="win-stat fade-in">
+        <span class="ws-num" id="stat-days">—</span>
+        <span class="ws-label">Days since start</span>
+      </div>
+      <div class="win-stat green fade-in">
+        <span class="ws-num" id="stat-months">—</span>
+        <span class="ws-label">Months since start</span>
+      </div>
+      <div class="win-stat amber fade-in">
+        <span class="ws-num" id="stat-runway">—</span>
+        <span class="ws-label">Months of runway left</span>
+      </div>
+      <div class="win-stat fade-in">
+        <span class="ws-num" id="stat-deadline">—</span>
+        <span class="ws-label">Days until goal window end</span>
+      </div>
+    </div>
+
+    <div class="study-note fade-in">
+      <span class="study-icon">💡</span>
+      <div>
+        <h4>About This Timeline</h4>
+        <p>
+          This tracker helps you visualize where you are within your personal milestone window.
+          The goal window spans 18 months from your start date, giving you a clear picture
+          of your progress and remaining runway at any point in time.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer class="footer">
+  <span class="footer-heart">⭐</span>
+  <div class="footer-title">DateTrack</div>
+  <p class="footer-sub">
+    Your personal milestone timeline.<br/>
+    Every day is a step forward.
+  </p>
+</footer>
+
+
+<script>
+  // ─── Key Dates ──────────────────────────────────────────
+  const START_DATE    = new Date('2026-02-10T00:00:00');
+  const WINDOW_END_15 = new Date('2027-05-10T00:00:00'); // 15 months
+  const WINDOW_END_18 = new Date('2027-08-10T00:00:00'); // 18 months
+  const PHASE3_EST    = new Date('2026-04-07T00:00:00');
+  const PHASE4_EST    = new Date('2026-05-06T00:00:00');
+
+  // ─── Helpers ────────────────────────────────────────────
+  const MS_PER_DAY   = 1000 * 60 * 60 * 24;
+  const DAYS_PER_MO  = 30.4375;
+
+  function daysBetween(a, b) {
+    return Math.floor((b - a) / MS_PER_DAY);
+  }
+
+  function monthsBetween(a, b) {
+    return (b - a) / (MS_PER_DAY * DAYS_PER_MO);
+  }
+
+  function fmt(n, decimals = 1) {
+    return parseFloat(n.toFixed(decimals)).toString();
+  }
+
+  // ─── Update Live Counters ────────────────────────────────
+  function updateCounters() {
+    const now = new Date();
+
+    const daysOff        = Math.max(0, daysBetween(START_DATE, now));
+    const weeksOff       = Math.floor(daysOff / 7);
+    const monthsOff      = monthsBetween(START_DATE, now);
+    const monthsRemain   = Math.max(0, monthsBetween(now, WINDOW_END_18));
+    const daysToDeadline = Math.max(0, daysBetween(now, WINDOW_END_18));
+
+    // Hero counters
+    document.getElementById('days-off').textContent        = daysOff.toLocaleString();
+    document.getElementById('weeks-off').textContent       = weeksOff.toLocaleString();
+    document.getElementById('months-remaining').textContent = fmt(monthsRemain);
+
+    // Stats section
+    document.getElementById('stat-days').textContent     = daysOff.toLocaleString();
+    document.getElementById('stat-months').textContent   = fmt(monthsOff);
+    document.getElementById('stat-runway').textContent   = fmt(monthsRemain);
+    document.getElementById('stat-deadline').textContent = daysToDeadline.toLocaleString();
+
+    // Progress bar — total span = 18 months
+    const totalDays  = daysBetween(START_DATE, WINDOW_END_18);
+    const elapsed    = Math.min(daysOff, totalDays);
+    const pct        = Math.min(100, (elapsed / totalDays) * 100);
+    const marker     = document.getElementById('progress-marker');
+    const tooltip    = document.getElementById('marker-tooltip');
+
+    marker.style.left = pct + '%';
+    tooltip.textContent = fmt(monthsOff, 1) + ' months';
+
+    // Update timeline dot states based on current date
+    if (now >= PHASE3_EST) {
+      document.getElementById('period-dot').className  = 'tl-dot past';
+      document.getElementById('period-badge').textContent = '✓ Reached';
+      document.getElementById('period-badge').className = 'tl-badge badge-done';
+    }
+    if (now >= PHASE4_EST) {
+      document.getElementById('window-dot').className = 'tl-dot now';
+    }
+  }
+
+  updateCounters();
+  // Update every 10 seconds (so the day counter ticks over at midnight without refresh)
+  setInterval(updateCounters, 10000);
+
+  // ─── Fade-in on scroll ──────────────────────────────────
+  const fadeEls = document.querySelectorAll('.fade-in');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, (entry.target.dataset.delay || 0) * 1);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  fadeEls.forEach((el, i) => {
+    el.dataset.delay = i * 80;
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
