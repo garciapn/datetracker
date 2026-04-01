@@ -375,6 +375,7 @@
     .status-great  { background: var(--sage-light);  color: var(--sage-dark); }
     .status-good   { background: var(--amber-light); color: #8A6800; }
     .status-fine   { background: #FDE8E8;            color: var(--rose-dark); }
+    .status-limit  { background: #F5DCE3;            color: #8C4055; }
 
     .scenario-months {
       display: flex;
@@ -402,6 +403,47 @@
     .mc-green  { background: var(--sage-light);  color: var(--sage-dark); }
     .mc-amber  { background: var(--amber-light); color: #8A6800; }
     .mc-pink   { background: #FCE4E4;            color: var(--rose-dark); }
+    .mc-rose   { background: #F5DCE3;            color: #8C4055; }
+
+    /* ─── Scenario Group Headers ─────────────────────────── */
+    .scenario-group-header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .group-line {
+      flex: 1;
+      height: 1px;
+      background: var(--cream-dark);
+      border-radius: 1px;
+    }
+
+    .group-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--brown-light);
+      white-space: nowrap;
+    }
+
+    /* ─── Path Label Badge ───────────────────────────────── */
+    .path-label {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      background: var(--cream-dark);
+      color: var(--brown-light);
+    }
+
+    .scenario-card.limit { border-top-color: #D4849A; }
 
     /* ─── Safe Window ────────────────────────────────────── */
     .window-section {
@@ -675,6 +717,10 @@
       <span class="label">Days since start</span>
     </div>
     <div class="counter-card">
+      <span class="number" id="months-since-start">—</span>
+      <span class="label">Months since start</span>
+    </div>
+    <div class="counter-card">
       <span class="number" id="weeks-off">—</span>
       <span class="label">Weeks since start</span>
     </div>
@@ -798,8 +844,8 @@
 <section class="scenarios-section">
   <div class="section-inner">
     <span class="section-label">Planning Ahead</span>
-    <h2 class="section-title">Three Scenarios</h2>
-    <p class="section-desc">Every path leads somewhere meaningful. Here's what each timeline looks like — all three are well within the goal window.</p>
+    <h2 class="section-title">Path Scenarios</h2>
+    <p class="section-desc">Every path leads somewhere meaningful. Here's what each timeline looks like across natural and assisted routes.</p>
 
     <div class="scenarios-grid">
 
@@ -983,6 +1029,204 @@
         <div class="scenario-status status-good">⚠️ Approaching the limit</div>
       </div>
 
+      <!-- ── Group: Natural Only ────────────────────────────── -->
+      <div class="scenario-group-header fade-in">
+        <div class="group-line"></div>
+        <span class="group-label">🌿 Natural Only</span>
+        <div class="group-line"></div>
+      </div>
+
+      <!-- Scenario H -->
+      <div class="scenario-card avg fade-in">
+        <span class="path-label">🌿 Natural</span>
+        <span class="scenario-emoji">🌾</span>
+        <div class="scenario-title">Scenario H — Natural Only (Max Wait)</div>
+
+        <div class="scenario-row">
+          <span class="key">Period</span>
+          <span class="val">May 5, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Begin trying</span>
+          <span class="val">Sept 2, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Preg</span>
+          <span class="val">~June 8, 2027</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Total off meds</span>
+          <span class="val">17 months</span>
+        </div>
+
+        <div class="scenario-months">
+          <div class="months-circle mc-amber">
+            <span class="num">17</span>
+            <span class="unit">months</span>
+          </div>
+        </div>
+
+        <div class="scenario-status status-good">⚠️ Approaching limit</div>
+      </div>
+
+      <!-- Scenario I -->
+      <div class="scenario-card avg fade-in">
+        <span class="path-label">🌿 Natural</span>
+        <span class="scenario-emoji">🌼</span>
+        <div class="scenario-title">Scenario I — Natural Only</div>
+
+        <div class="scenario-row">
+          <span class="key">Period</span>
+          <span class="val">April 7, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Begin trying</span>
+          <span class="val">July 29, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Preg</span>
+          <span class="val">~May 5, 2027</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Total off meds</span>
+          <span class="val">~15 months</span>
+        </div>
+
+        <div class="scenario-months">
+          <div class="months-circle mc-amber">
+            <span class="num">15</span>
+            <span class="unit">months</span>
+          </div>
+        </div>
+
+        <div class="scenario-status status-good">⚠️ Approaching limit</div>
+      </div>
+
+      <!-- ── Group: Natural → IVF ───────────────────────────── -->
+      <div class="scenario-group-header fade-in">
+        <div class="group-line"></div>
+        <span class="group-label">🔬 Natural → IVF</span>
+        <div class="group-line"></div>
+      </div>
+
+      <!-- Scenario J -->
+      <div class="scenario-card limit fade-in">
+        <span class="path-label">🔬 Natural → IVF</span>
+        <span class="scenario-emoji">🌷</span>
+        <div class="scenario-title">Scenario J — Natural then IVF</div>
+
+        <div class="scenario-row">
+          <span class="key">Period</span>
+          <span class="val">May 5, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Try naturally until</span>
+          <span class="val">July 28, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Conc</span>
+          <span class="val">Sept 22, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Preg</span>
+          <span class="val">~June 28, 2027</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Total off meds</span>
+          <span class="val">18 months</span>
+        </div>
+
+        <div class="scenario-months">
+          <div class="months-circle mc-rose">
+            <span class="num">18</span>
+            <span class="unit">months</span>
+          </div>
+        </div>
+
+        <div class="scenario-status status-limit">🌸 At Goal Limit</div>
+      </div>
+
+      <!-- Scenario K -->
+      <div class="scenario-card limit fade-in">
+        <span class="path-label">🔬 Natural → IVF</span>
+        <span class="scenario-emoji">🌸</span>
+        <div class="scenario-title">Scenario K — Natural then IVF</div>
+
+        <div class="scenario-row">
+          <span class="key">Period</span>
+          <span class="val">April 7, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Try naturally until</span>
+          <span class="val">July 1, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Conc</span>
+          <span class="val">Sept 23, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Preg</span>
+          <span class="val">~June 29, 2027</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Total off meds</span>
+          <span class="val">18 months</span>
+        </div>
+
+        <div class="scenario-months">
+          <div class="months-circle mc-rose">
+            <span class="num">18</span>
+            <span class="unit">months</span>
+          </div>
+        </div>
+
+        <div class="scenario-status status-limit">🌸 At Goal Limit</div>
+      </div>
+
+      <!-- ── Group: IVF Only ────────────────────────────────── -->
+      <div class="scenario-group-header fade-in">
+        <div class="group-line"></div>
+        <span class="group-label">🔬 IVF Only</span>
+        <div class="group-line"></div>
+      </div>
+
+      <!-- Scenario L -->
+      <div class="scenario-card limit fade-in">
+        <span class="path-label">🔬 IVF Only</span>
+        <span class="scenario-emoji">🔬</span>
+        <div class="scenario-title">Scenario L — IVF Only</div>
+
+        <div class="scenario-row">
+          <span class="key">Wait period ends</span>
+          <span class="val">May 5, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">IVF</span>
+          <span class="val">May 5, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Conc</span>
+          <span class="val">Sept 22, 2026</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Preg</span>
+          <span class="val">~June 28, 2027</span>
+        </div>
+        <div class="scenario-row">
+          <span class="key">Total off meds</span>
+          <span class="val">18 months</span>
+        </div>
+
+        <div class="scenario-months">
+          <div class="months-circle mc-rose">
+            <span class="num">18</span>
+            <span class="unit">months</span>
+          </div>
+        </div>
+
+        <div class="scenario-status status-limit">🌸 At Goal Limit</div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -1108,6 +1352,7 @@
 
     // Hero counters
     document.getElementById('days-off').textContent        = daysOff.toLocaleString();
+    document.getElementById('months-since-start').textContent = Math.floor(daysOff / 30.44).toLocaleString();
     document.getElementById('weeks-off').textContent       = weeksOff.toLocaleString();
     document.getElementById('months-remaining').textContent = fmt(monthsRemain);
 
